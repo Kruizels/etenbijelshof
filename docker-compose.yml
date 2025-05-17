@@ -1,0 +1,12 @@
+# docker-compose.yml
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "3000:3000"
+    environment:
+      # Optioneel: je kunt hier env-vars zoals NEXT_PUBLIC_... kwijt
+      NODE_ENV: development
