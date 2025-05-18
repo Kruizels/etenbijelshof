@@ -1,7 +1,6 @@
 # Node
 **/node_modules/
 **/.next/
-package-lock.json
 
 # Logs
 npm-debug.log*
