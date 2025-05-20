@@ -5,30 +5,30 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "opennextjs-cloudflare build",
+    "deploy": "opennextjs-cloudflare deploy",
     "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier --write .",
-    "deploy": "wrangler deploy"
+    "format": "prettier --write ."
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.812.0",
-    "next": "^15.3.2",
-    "next-auth": "^4.24.11",
-    "react": "^18",
-    "react-dom": "^18"
+    "@aws-sdk/client-s3": "^3",
+    "next": "^15",
+    "next-auth": "^4",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250515.0",
-    "@eslint/eslintrc": "^3.3.1",
-    "@types/node": "22.15.18",
-    "@types/react": "^18.2.7",
-    "@types/react-dom": "^18.2.4",
-    "eslint": "^9.27.0",
-    "eslint-config-next": "latest",
-    "eslint-config-prettier": "^10.1.5",
+    "@cloudflare/workers-types": "^4",
+    "@eslint/eslintrc": "^3",
+    "@opennextjs/cloudflare": "^1",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^15",
+    "eslint-config-prettier": "^10",
     "npm-check-updates": "^18.0.1",
-    "prettier": "^3.5.3",
+    "prettier": "^3",
     "wrangler": "^4"
   },
   "overrides": {

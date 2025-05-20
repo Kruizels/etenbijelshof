@@ -22,3 +22,5 @@ docker-compose.override.yml
 # Supabase CLI artifacts
 infra/.supabase/
 supabase/config.toml
+
+TXT/

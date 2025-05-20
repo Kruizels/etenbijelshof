@@ -1,4 +1,15 @@
 /* styles/globals.css */
+
+/* Font embedding */
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/Nunito-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Reset + Box model */
 *,
 *::before,
 *::after {
@@ -6,7 +17,84 @@
   margin: 0;
   padding: 0;
 }
+
+/* Body */
 body {
-  font-family: system-ui, sans-serif;
+  font-family: "Nunito", system-ui, sans-serif;
   line-height: 1.5;
+  background: #fff;
+  color: #222;
+  font-size: 1rem;
+}
+
+/* Typografie */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary, #f05a28);
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  margin-top: 2rem;
+  color: #333;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--primary, #f05a28);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Lists */
+ul,
+ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* Formulieren */
+input,
+textarea,
+button,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+button {
+  background: var(--primary, #f05a28);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #d94e21;
+}
+
+/* Afbeeldingen */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
 }

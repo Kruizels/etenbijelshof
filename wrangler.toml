@@ -1,0 +1,21 @@
+name = "etenbijelshof"
+compatibility_date = "2025-05-20"
+
+[build]
+command = "npm run build"
+
+[env.production]
+route = "etenbijelshof.nl/*"
+zone_id = "<ZONE_ID>"
+
+[[d1_databases]]
+binding = "RECIPES_DB"
+database_name = "recepten_db"
+
+[[r2_buckets]]
+binding = "RECIPE_PHOTOS"
+bucket_name = "recipe-photos"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "..."
