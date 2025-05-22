@@ -1,0 +1,26 @@
+# Node.js dependencies & Next.js build output
+node_modules/
+.next/
+
+# Logs
+npm-debug.log*
+
+# Env files
+.env
+.env.*.local
+
+# VSCode settings
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Supabase CLI artifacts
+infra/.supabase/
+supabase/config.toml
+
+TXT/

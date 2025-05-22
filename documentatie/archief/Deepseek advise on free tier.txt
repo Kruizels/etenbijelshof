@@ -1,0 +1,182 @@
+markdown
+# Aangepaste Implementatie voor Cloudflare Free Tier
+
+## 🚫 Verwijderde Betaalde Features
+1. **Workers AI**
+   - Vervangen door: `sharp.js` voor image processing in Workers
+   - Vereist Node.js compatibiliteit in `wrangler.toml`:
+     ```toml
+     compatibility_flags = ["nodejs_compat"]
+     ```
+
+2. **Cloudflare Access**
+   - Alternatief: next-auth met D1 adapter + Turnstile
+   ```typescript
+   // auth.ts
+   import D1Adapter from "@next-auth/d1-adapter";
+   export const authOptions = {
+     adapter: D1Adapter(env.DB),
+     providers: [/* config */]
+   }
+Cloudflare Queues
+
+Vervangen door: Scheduled Workers
+
+toml
+[[triggers]]
+crons = ["*/10 * * * *"] // Elke 10 minuten
+🔄 Aangepaste Database Configuratie
+sql
+-- Optimalisaties voor D1 Free Tier
+CREATE INDEX idx_recipes_created ON recipes(created_at);
+CREATE INDEX idx_users_email ON users(email);
+
+-- FTS5 vervangen door LIKE queries
+ALTER TABLE recipes ADD COLUMN searchable_text TEXT GENERATED ALWAYS AS (
+  title || ' ' || description
+) VIRTUAL;
+🖼️ Image Processing Workflow
+typescript
+// image-worker.js
+import sharp from 'sharp';
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const params = url.searchParams;
+    
+    const image = await fetch(params.get('source'));
+    const buffer = await image.arrayBuffer();
+    
+    return new Response(
+      await sharp(buffer)
+        .resize(Number(params.get('w') || 800)
+        .webp()
+        .toBuffer(),
+      { headers: { 'Content-Type': 'image/webp' } }
+    );
+  }
+}
+📉 Kostenbewuste Architectuur
+Aangepaste Infrastructuur
+Component	Gratis Tier Aanpassing
+Image Resizing	Eigen Worker met sharp.js
+AI Moderation	Handmatige moderatie + regex filters
+Multi-Region	Standaard Cloudflare edge network
+Queues	Scheduled Workers + KV state
+Performance Optimalisaties
+typescript
+// cache.js
+export const getRecipe = async (id) => {
+  const cache = await env.CACHE.get(`recipe:${id}`);
+  if (cache) return JSON.parse(cache);
+  
+  const data = await env.DB.prepare('SELECT * FROM recipes WHERE id = ?')
+    .bind(id).first();
+  
+  await env.CACHE.put(`recipe:${id}`, JSON.stringify(data), {
+    expirationTtl: 3600 // 1 uur cache
+  });
+  
+  return data;
+}
+🔐 Beveiligingsaanpassingen
+toml
+# Vereenvoudigde wrangler.toml
+name = "etenbijelshof-free"
+main = "./.open-next/worker-user-entry/index.cjs"
+compatibility_date = "2025-05-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "etenbijelshof-db"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "etenbijelshof-images"
+
+[[kv_namespaces]]
+binding = "CACHE"
+📊 Kostenmonitoring
+bash
+# Daily check script
+curl -X GET "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/analytics/analytics/workers" \
+  -H "Authorization: Bearer ${CF_API_TOKEN}" \
+  -G --data-urlencode "since=$(date -u +"%Y-%m-%dT00:00:00Z")" \
+  --data-urlencode "until=$(date -u +"%Y-%m-%dT23:59:59Z")"
+🛠️ Aangepaste Build Workflow
+yaml
+# .github/workflows/deploy.yml
+jobs:
+  deploy:
+    steps:
+      - name: Build
+        run: |
+          npx opennextjs-cloudflare build \
+            --minify \
+            --no-sourcemaps \
+            --experimental-edge-cache
+          
+      - name: Deploy
+        uses: cloudflare/wrangler-action@3
+        with:
+          command: deploy .open-next --free
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+🚨 Limiet Bewaking
+Implementeer deze alerts in wrangler.toml:
+
+toml
+[alert]
+type = "threshold"
+threshold = 90000 # 90k/day
+trigger = "request.count > 90000"
+notification = { email = "alert@etenbijelshof.nl" }
+
+[alert.d1]
+type = "read"
+threshold = 4500000 # 4.5M reads
+Key Wijzigingen Summary
+Image Pipeline
+
+Sharp.js i.p.v. Workers AI
+
+Eén resolutie variant (800px webp)
+
+Geen automatische content moderatie
+
+Authentication
+
+Next-auth + D1 adapter
+
+Geen Cloudflare Access
+
+Basic Turnstile integratie
+
+Background Tasks
+
+Scheduled Workers i.p.v. Queues
+
+KV voor state management
+
+Search
+
+LIKE queries i.p.v. FTS5
+
+Server-side filtering
+
+Monitoring
+
+Eigen metrics via Workers
+
+Cloudflare basis analytics
+
+Deze implementatie blijft volledig binnen de gratis tier mits:
+
+Minder dan 100k requests/dag
+
+Database reads onder 5M/dag
+
+Opslag onder 10GB
+
+Minder dan 500 builds/maand
